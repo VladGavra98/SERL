@@ -4,6 +4,7 @@ from copy import deepcopy, copy
 import os
 from pathlib import Path
 import random
+import warnings
 import toml
 from tqdm import tqdm
 import numpy as np
@@ -166,20 +167,18 @@ def main():
     '''             Prepare References             '''
     # Time set-points
     time_array = np.linspace(0., t_max, 6)
-    # time_array = [0,5,30,40,60,80]   # -- Perter's stall ref
+
 
     # Pitch set-points:
     amp1 = [0, 12, 3, -4, -8, 2]
-    # amp1 = [0,30,45,15,0,0]   # -- Perter's stall ref
     base_ref_theta = signals.SmoothedStepSequence(
         time_array, amp1, smooth_width=t_max//10)
-
 
     # Roll set-points:
     amp2 = [2, -2, 2, 10, 2, -6]
     base_ref_phi = signals.SmoothedStepSequence(
         time_array, amp2, smooth_width=t_max//10)
-    # base_ref_phi = signals.Const(0, t_max, value=0.0)
+
 
     # Build list of reference tuples from seed
     theta_refs = gen_refs(t_max, time_array, 12.0, num_trails=cla.num_trails)
@@ -206,8 +205,8 @@ def main():
     if cla.eval_pop or cla.eval_actor:
         pop = load_pop(logs_dir, args=parameters)
 
-    '''              Evaluation of one Actor              '''
     if cla.eval_actor:
+        '''              Evaluation of one Actor              '''
         if cla.index is not None:
             idx = cla.index
         else:
@@ -234,12 +233,11 @@ def main():
         if cla.save_trajectory: save_trajecotry(faultpath, data)
 
 
-    '''              Entire Population Evaluation                '''
-    if cla.eval_pop:
+    elif cla.eval_pop:
+        '''              Entire Population Evaluation                '''
         nmae_lst, sm_lst = [], []
 
         nmae_min = 500
-        # smoothness_min = -10 if fault_name != 'jr' else -25
 
         for i, agent in enumerate(pop):
             print('Actor:', i)
@@ -309,8 +307,8 @@ def main():
                 f.write("\n\n")
             f.close()
 
-    '''              RL   Evaluation               '''
-    if cla.eval_rl:
+    elif cla.eval_rl:
+        '''              RL   Evaluation               '''
         # Update config
         rl_parameters = deepcopy(parameters)
         rl_parameters.update_from_dict(model_config)
@@ -347,6 +345,9 @@ def main():
 
         # Save trajectories on base reference
         if cla.save_trajectory: save_trajecotry(faultpath, data_rl)
+
+    else:
+        warnings.warn('The command does not specify which part of the agent to evalaute. Please add one of the following args: [-eval_pop] [-eval_actor] [-eval_rl]')
 
 def save_trajecotry(faultpath, data):
     save_path = faultpath / Path('nominal_trajectory.csv')

@@ -13,15 +13,6 @@ import logging
 MAX_GRAD_NORM = 10
 
 
-# level = logging.INFO
-# logging.basicConfig(filename='./tmp/T3_debug_logger.txt',
-#                     filemode='a',
-#                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-#                     datefmt='%H:%M:%S',
-#                     level=level)
-
-
-
 
 class Critic(nn.Module):
     def __init__(self, args):
@@ -78,7 +69,6 @@ class Critic(nn.Module):
         # ------ Critic 2 ---------
         # hidden layer 1_2 (Input Interface)
         nn_input = torch.cat((state,action), 1)
-        # nn_input = self.bnorm_2(nn_input)
 
         out = self.l1_2(nn_input)
         out = self.lnorm1_2(out)
@@ -162,9 +152,6 @@ class TD3(object):
         loss_q1 = F.mse_loss(current_q1, target_q)
         loss_q2 = F.mse_loss(current_q2, target_q)
         TD =  loss_q1 + loss_q2
-
-        if iteration % 500 == 0:
-            logging.debug(f'taget_q={torch.mean(target_q):0.2f} -- curr_q1: {torch.mean(current_q1):0.3f},curr_q2: {torch.mean(current_q2):0.2f} -- TD loss: {TD:0.3f}')
 
         # Optimize Critics
         self.critic_optim.zero_grad()

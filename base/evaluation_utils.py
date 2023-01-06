@@ -57,8 +57,11 @@ def gen_refs(t_max: int, amp_times: np.array, ampl_max: float, num_trails: int =
 
 def find_logs_path(logs_name : str, root_dir : str = './logs/wandb/') -> str:
     cwd = os.getcwd()
-    pwd = Path(os.path.abspath(os.path.join(cwd, os.pardir)))
-    wandb = pwd / Path(root_dir)
+
+    if not cwd.endswith('SERL'):
+        pwd = Path(os.path.abspath(os.path.join(cwd, os.pardir)))
+        cwd = pwd
+    wandb = cwd / Path(root_dir)
     for _path in wandb.iterdir():
         if _path.is_dir():
             if _path.stem.lower().endswith(logs_name):
