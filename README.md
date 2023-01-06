@@ -38,12 +38,19 @@ Recent research in bio-inspired artificial intelligence potentially provides sol
 
 ## Usage
 ### Evaluating pre-trained agents:
-- `python3.8 ./base/evaluate.py - `: evaluate attitude controller
+- `python3.8 ./base/evaluate.py -agent_name=$AGENT_NAME$ -env=$ENV_NAME$ -save_stats`
+> - available agents: SERL50, SERL10, TD3
+>
+> - available environment: nominal, low-q, high-q, gust, cg (CG aft-shifted), be (broken elevator), jr (jammed rudder), sa (saturated aileron), se (saturated elevator), ice (ice on wings)
+>
+> - which part of the agent to evaluate:
+>  eval_rl /
+>  eval_actor /
+>  eval_pop
 
+### Training new intelligent controllers:
 
-### Training new agents:
-
-- `base/train.py`: train a new SAC attitude controller
+- `python3.8 ./base/train.py -frames=1_000_000 -should_log`
 
 
 

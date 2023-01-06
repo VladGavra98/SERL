@@ -62,9 +62,12 @@ def find_logs_path(logs_name : str, root_dir : str = './logs/wandb/') -> str:
         pwd = Path(os.path.abspath(os.path.join(cwd, os.pardir)))
         cwd = pwd
     wandb = cwd / Path(root_dir)
+
+    logs_name = logs_name.lower()
     for _path in wandb.iterdir():
         if _path.is_dir():
             if _path.stem.lower().endswith(logs_name):
+                print(_path.stem.lower())
                 return wandb / _path
     return None
 
