@@ -54,6 +54,14 @@ Recent research in bio-inspired artificial intelligence potentially provides sol
 
 
 
+## Samples
+
+<p align="center">
+  <img src="logs/wandb/run-20221102_144601-1dixcrrl_TD3/figures/nominal/rl_nominal.png" width="298"/>
+    <img src="logs/wandb/run-20220924_144643-1xzaqiba_SERL50/figures/nominal/actor18_nominal.png" width="298"/>
+</p>
+
+
 
 ## Acknowledgements
 The code base has been used to obtain the results of MSc thesis. During it, I researched the possibility to combine DRL and EA to train optimal fault-tolerant flight controllers. The project was completed within the Control \& Simulation group at the Aerospace Engineering faculty of TU Delft, under the supervision of Dr.ir. Erik-Jan van Kampen.
