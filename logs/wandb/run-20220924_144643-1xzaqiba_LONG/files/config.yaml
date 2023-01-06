@@ -1,0 +1,150 @@
+wandb_version: 1
+
+_verbose_crossover:
+  desc: null
+  value: false
+_verbose_mut:
+  desc: null
+  value: false
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.12.21
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.8.13
+    start_time: 1664023603
+    t:
+      1:
+      - 1
+      - 55
+      2:
+      - 1
+      - 55
+      3:
+      - 16
+      4: 3.8.13
+      5: 0.12.21
+      8:
+      - 5
+action_dim:
+  desc: null
+  value: 3
+activation_actor:
+  desc: null
+  value: tanh
+activation_critic:
+  desc: null
+  value: elu
+batch_size:
+  desc: null
+  value: 256
+buffer_size:
+  desc: null
+  value: 2000000
+crossover_prob:
+  desc: null
+  value: 0.0
+device:
+  desc: null
+  value: cpu
+distil_crossover:
+  desc: null
+  value: true
+distil_type:
+  desc: null
+  value: fitness
+elite_fraction:
+  desc: null
+  value: 0.3
+env_name:
+  desc: null
+  value: PHlab_attitude_nominal
+frac_frames_train:
+  desc: null
+  value: 1.0
+gamma:
+  desc: null
+  value: 0.99
+hidden_size:
+  desc: null
+  value: 32
+individual_bs:
+  desc: null
+  value: 10000
+learn_start:
+  desc: null
+  value: 10000
+lr:
+  desc: null
+  value: 4.820491438303387e-05
+mut_type:
+  desc: null
+  value: safe
+mutation_batch_size:
+  desc: null
+  value: 256
+mutation_mag:
+  desc: null
+  value: 0.06275276328466882
+mutation_prob:
+  desc: null
+  value: 0.9
+next_save:
+  desc: null
+  value: 600
+noise_clip:
+  desc: null
+  value: 0.5
+noise_sd:
+  desc: null
+  value: 0.23159705341857903
+num_evals:
+  desc: null
+  value: 3
+num_frames:
+  desc: null
+  value: 5000000
+num_layers:
+  desc: null
+  value: 3
+policy_update_freq:
+  desc: null
+  value: 3
+pop_size:
+  desc: null
+  value: 50
+rl_to_ea_synch_period:
+  desc: null
+  value: 1
+save_foldername:
+  desc: null
+  value: ./tmp/
+seed:
+  desc: null
+  value: 7
+should_log:
+  desc: null
+  value: true
+state_dim:
+  desc: null
+  value: 7
+tau:
+  desc: null
+  value: 0.005
+test_ea:
+  desc: null
+  value: false
+use_caps:
+  desc: null
+  value: true
+use_champion_target:
+  desc: null
+  value: 'False'
+use_ddpg:
+  desc: null
+  value: false
+use_done_mask:
+  desc: null
+  value: true

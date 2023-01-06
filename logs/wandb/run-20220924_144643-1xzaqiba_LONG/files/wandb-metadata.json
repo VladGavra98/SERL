@@ -1,0 +1,38 @@
+{
+    "os": "Linux-4.15.0-176-generic-x86_64-with-glibc2.27",
+    "python": "3.8.13",
+    "heartbeatAt": "2022-09-24T12:46:45.549674",
+    "startedAt": "2022-09-24T12:46:43.191320",
+    "docker": null,
+    "gpu": "Quadro FX 1700",
+    "gpu_count": 1,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [
+        "--frames=5000000",
+        "--should_log",
+        "--run_name=vibrant_long",
+        "--next_save=600",
+        "--batch_size=256",
+        "--buffer_size=2000000",
+        "--champion_target=False",
+        "--distil_type=fitness",
+        "--gamma=0.99",
+        "--hidden_size=32",
+        "--lr=4.820491438303387e-05",
+        "--mutation_mag=0.06275276328466882",
+        "--noise_sd=0.23159705341857903"
+    ],
+    "state": "running",
+    "program": "./tuner_erl.py",
+    "codePath": "td3-erl/tuner_erl.py",
+    "git": {
+        "remote": "https://github.com/VladGavra98/thesis.git",
+        "commit": "2578c8a2e029344c28cf16fcbd851e4c7f740481"
+    },
+    "email": "\u00a8vladgavra98@gmail.com\u00a8",
+    "root": "/data/vgavra/thesis",
+    "host": "TUD277815",
+    "username": "vgavra",
+    "executable": "/usr/bin/python3.8"
+}

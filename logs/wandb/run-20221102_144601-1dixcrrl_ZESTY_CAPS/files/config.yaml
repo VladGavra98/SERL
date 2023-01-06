@@ -1,0 +1,177 @@
+wandb_version: 1
+
+_verbose_crossover:
+  desc: null
+  value: false
+_verbose_mut:
+  desc: null
+  value: false
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.13.4
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.8.13
+    start_time: 1667396761.678477
+    t:
+      1:
+      - 1
+      - 55
+      2:
+      - 1
+      - 55
+      3:
+      - 2
+      - 13
+      - 16
+      - 23
+      4: 3.8.13
+      5: 0.13.4
+      8:
+      - 5
+action_dim:
+  desc: null
+  value: 3
+activation_actor:
+  desc: null
+  value: relu
+activation_critic:
+  desc: null
+  value: elu
+batch_size:
+  desc: null
+  value: 64
+buffer_size:
+  desc: null
+  value: 100000
+crossover_prob:
+  desc: null
+  value: 0.0
+device:
+  desc: null
+  value: cpu
+distil_crossover:
+  desc: null
+  value: true
+distil_type:
+  desc: null
+  value: fitness
+elite_fraction:
+  desc: null
+  value: 0.2
+env_name:
+  desc: null
+  value: PHlab_attitude
+frac_frames_train:
+  desc: null
+  value: 1.0
+gamma:
+  desc: null
+  value: 0.99
+hidden_size:
+  desc: null
+  value: 96
+individual_bs:
+  desc: null
+  value: 10000
+learn_start:
+  desc: null
+  value: 10000
+lr:
+  desc: null
+  value: 0.0004335
+mut_type:
+  desc: null
+  value: proximal
+mutation_batch_size:
+  desc: null
+  value: 86
+mutation_mag:
+  desc: null
+  value: 0.0247682869654
+mutation_prob:
+  desc: null
+  value: 0.9
+next_save:
+  desc: null
+  value: 200
+noise_clip:
+  desc: null
+  value: 0.5
+noise_sd:
+  desc: null
+  value: 0.3363
+ns:
+  desc: null
+  value: false
+ns_epochs:
+  desc: null
+  value: 10
+num_evals:
+  desc: null
+  value: 3
+num_frames:
+  desc: null
+  value: 1000000
+num_layers:
+  desc: null
+  value: 3
+per:
+  desc: null
+  value: false
+policy_update_freq:
+  desc: null
+  value: 3
+pop_size:
+  desc: null
+  value: 0
+rl_to_ea_synch_period:
+  desc: null
+  value: 1
+run_name:
+  desc: null
+  value: zesty_caps_0602
+save_foldername:
+  desc: null
+  value: ../logs/wandb/run-20221102_144601-1dixcrrl/files
+save_periodic:
+  desc: null
+  value: false
+seed:
+  desc: null
+  value: 7
+should_log:
+  desc: null
+  value: true
+smooth_fitness:
+  desc: null
+  value: false
+state_dim:
+  desc: null
+  value: 7
+tau:
+  desc: null
+  value: 0.005
+test_ea:
+  desc: null
+  value: false
+use_caps:
+  desc: null
+  value: true
+use_champion_target:
+  desc: null
+  value: false
+use_ddpg:
+  desc: null
+  value: false
+use_done_mask:
+  desc: null
+  value: true
+use_ounoise:
+  desc: null
+  value: false
+wandb_version:
+  desc: null
+  value: 1

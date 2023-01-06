@@ -1,0 +1,27 @@
+{
+    "os": "Linux-4.15.0-176-generic-x86_64-with-glibc2.27",
+    "python": "3.8.13",
+    "heartbeatAt": "2022-11-02T13:46:02.227235",
+    "startedAt": "2022-11-02T13:46:01.640364",
+    "docker": null,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [
+        "-should_log",
+        "-run_name=zesty_caps_0602",
+        "-config_path=/logs/wandb/run-20220905_171125-1e2q2ljf_ZESTY",
+        "-frames=800_000"
+    ],
+    "state": "running",
+    "program": "./run_pderl.py",
+    "codePath": "td3-erl/run_pderl.py",
+    "git": {
+        "remote": "https://github.com/VladGavra98/thesis.git",
+        "commit": "60c6ac68ef34275dfa5371fe82fb1f62f87adb0e"
+    },
+    "email": "\u00a8vladgavra98@gmail.com\u00a8",
+    "root": "/data/vgavra/thesis",
+    "host": "TUD277815",
+    "username": "vgavra",
+    "executable": "/usr/bin/python3.8"
+}
