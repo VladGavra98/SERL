@@ -6,9 +6,9 @@ import numpy as np
 from core import agent
 import torch
 from parameters import Parameters
-import wandb
 
 from core.utils import load_config
+import envs
 import envs.config
 
 
@@ -73,6 +73,7 @@ if __name__ == "__main__":
     params_dict = parameters.__dict__
     # strat trackers
     if cla.should_log:
+        import wandb
         print('\033[1;32m WandB logging started')
         run = wandb.init(project="CAPS",
                         entity="vgavra",

@@ -1,7 +1,7 @@
 import random
 import numpy as np
 from typing import List, Tuple, Dict
-import fastrand
+import random
 import torch
 import torch.distributions as dist
 from core.mod_utils import hard_update, soft_update
@@ -48,7 +48,7 @@ class SSNE:
 
         offsprings = list(set(offsprings))  # Find unique offsprings
         if len(offsprings) % 2 != 0:  # Number of offsprings should be even
-            offsprings.append(offsprings[fastrand.pcg32bounded(len(offsprings))])
+            offsprings.append(offsprings[random.randint(0,len(offsprings))])
         return offsprings
 
     def list_argsort(self, seq):
@@ -69,27 +69,27 @@ class SSNE:
             if len(W1.shape) == 2: #Weights no bias
                 num_variables = W1.shape[0]
                 # Crossover opertation [Indexed by row]
-                num_cross_overs = fastrand.pcg32bounded(num_variables * 2)  # Lower bounded on full swaps
+                num_cross_overs = random.randint(0,num_variables * 2)  # Lower bounded on full swaps
                 for i in range(num_cross_overs):
                     receiver_choice = random.random()  # Choose which gene to receive the perturbation
                     if receiver_choice < 0.5:
-                        ind_cr = fastrand.pcg32bounded(W1.shape[0])  #
+                        ind_cr = random.randint(0,W1.shape[0])  #
                         W1[ind_cr, :] = W2[ind_cr, :]
                     else:
-                        ind_cr = fastrand.pcg32bounded(W1.shape[0])  #
+                        ind_cr = random.randint(0,W1.shape[0])  #
                         W2[ind_cr, :] = W1[ind_cr, :]
 
             elif len(W1.shape) == 1: #Bias
                 num_variables = W1.shape[0]
                 # Crossover opertation [Indexed by row]
-                num_cross_overs = fastrand.pcg32bounded(num_variables)  # Lower bounded on full swaps
+                num_cross_overs = random.randint(0,num_variables)  # Lower bounded on full swaps
                 for i in range(num_cross_overs):
                     receiver_choice = random.random()  # Choose which gene to receive the perturbation
                     if receiver_choice < 0.5:
-                        ind_cr = fastrand.pcg32bounded(W1.shape[0])  #
+                        ind_cr = random.randint(0,W1.shape[0])  #
                         W1[ind_cr] = W2[ind_cr]
                     else:
-                        ind_cr = fastrand.pcg32bounded(W1.shape[0])  #
+                        ind_cr = random.randint(0,W1.shape[0])  #
                         W2[ind_cr] = W1[ind_cr]
 
         # Evaluate the children
@@ -118,7 +118,7 @@ class SSNE:
                 test_score_c2 += episode.reward
             test_score_c2 /= trials
 
-  
+
             print("==================== Classic Crossover ======================")
             print(f"Parent 1: {test_score_p1:0.1f}")
             print(f"Parent 2: {test_score_p2:0.1f}")
@@ -142,7 +142,7 @@ class SSNE:
             for _ in range(iters):
                 batch = new_agent.buffer.sample(batch_size)
                 losses.append(new_agent.update_parameters(batch, gene1.actor, gene2.actor, self.critic))
-        
+
         # test and print
         if self.args.test_ea and self.args._verbose_crossover:
             test_score_p1 = 0
@@ -171,7 +171,7 @@ class SSNE:
             print(f"Parent 2: {test_score_p2:0.1f}")
             print(f"Child performance: {test_score_c:0.2f}")
             print(f"Benefit: {test_score_c - min(test_score_p1,test_score_p2) :0.2f} (>0 is better)")
-            
+
             # self.stats.add({
             #     'cros_parent1_fit': test_score_p1,
             #     'cros_parent2_fit': test_score_p2,
@@ -181,7 +181,7 @@ class SSNE:
         return new_agent
 
     def proximal_mutate(self, gene: GeneticAgent, mag : float ):
-        # Based on code from https://github.com/uber-research/safemutations 
+        # Based on code from https://github.com/uber-research/safemutations
         model = gene.actor
         # sample mutation batch
         batch = gene.buffer.sample(min(self.args.mutation_batch_size, len(gene.buffer)))
@@ -196,7 +196,7 @@ class SSNE:
         normal = dist.Normal(torch.zeros_like(params), torch.ones_like(params) * mag)
         delta = normal.sample()
 
-        # we want to calculate a jacobian of derivatives 
+        # we want to calculate a jacobian of derivatives
         # of each output's sensitivity to each parameter
         jacobian = torch.zeros(num_outputs, tot_size).to(self.args.device)
         grad_output = torch.zeros(output.size()).to(self.args.device)
@@ -212,14 +212,14 @@ class SSNE:
 
         # summed gradients sensitivity
         scaling = torch.sqrt((jacobian**2).sum(0))
-        
+
         lam_max = 0.01
         scaling[scaling == 0] = 1.0
         scaling[scaling < lam_max] = lam_max
         delta /= scaling
 
         #update child actor net
-        new_params = params + delta   
+        new_params = params + delta
         model.inject_parameters(new_params)
 
         # test
@@ -259,7 +259,7 @@ class SSNE:
             batch = gene.critical_buffer.sample(min(self.args.mutation_batch_size, len(gene.critical_buffer)))
         else:
             batch = gene.buffer.sample(min(self.args.mutation_batch_size, len(gene.buffer)))
-            
+
         state, _, _, _, _ = batch
         output = model(state)
 
@@ -271,7 +271,7 @@ class SSNE:
         normal = dist.Normal(torch.zeros_like(params), torch.ones_like(params) * mag)
         delta = normal.sample()
 
-        # we want to calculate a jacobian of derivatives 
+        # we want to calculate a jacobian of derivatives
         # of each output's sensitivity to each parameter
         jacobian = torch.zeros(num_outputs, tot_size).to(self.args.device)
         grad_output = torch.zeros(output.size()).to(self.args.device)
@@ -287,14 +287,14 @@ class SSNE:
 
         # summed gradients sensitivity
         scaling = torch.sqrt((jacobian**2).sum(0))
-        
+
         lam_max = 0.01
         scaling[scaling == 0] = 1.0
         scaling[scaling < lam_max] = lam_max
         delta /= scaling
 
         #update child actor net
-        new_params = params + delta   
+        new_params = params + delta
         model.inject_parameters(new_params)
 
         # test
@@ -352,10 +352,10 @@ class SSNE:
                 ssne_prob = ssne_probabilities[i]
 
                 if random.random() < ssne_prob:
-                    num_mutations = fastrand.pcg32bounded(int(math.ceil(num_mutation_frac * num_weights)))  # Number of mutation instances
+                    num_mutations = random.randint(0,int(math.ceil(num_mutation_frac * num_weights)))  # Number of mutation instances
                     for _ in range(num_mutations):
-                        ind_dim1 = fastrand.pcg32bounded(W.shape[0])
-                        ind_dim2 = fastrand.pcg32bounded(W.shape[-1])
+                        ind_dim1 = random.randint(0,W.shape[0])
+                        ind_dim2 = random.randint(0,W.shape[-1])
                         random_num = random.random()
 
                         if random_num < super_mut_prob:  # Super Mutation probability
@@ -399,7 +399,7 @@ class SSNE:
     @staticmethod
     def get_novelty(bcs : np.ndarray, first : int, second : int) -> np.float64:
         return np.linalg.norm(bcs[first,:] - bcs[second,:], axis = -1, ord =2)
-  
+
     @staticmethod
     def sort_groups_by_novelty(genomes, bcs):
         groups = []
@@ -436,7 +436,7 @@ class SSNE:
 
         Returns:
             list : sorted groups from most different to msot similar
-        """        
+        """
         groups = []
         for i, first in enumerate(genomes):
             for second in genomes[i+1:]:
@@ -445,7 +445,7 @@ class SSNE:
         return sorted(groups, key=lambda group: group[2], reverse=True)
 
     def epoch (self, pop: List[GeneticAgent], fitness_evals : np.array or List[float], bcs_evals : np.array = None):
-        """ One generation update. Entire epoch is handled with indices; 
+        """ One generation update. Entire epoch is handled with indices;
             Index ranks  nets by fitness evaluation - 0 is the best after reversing.
         Args:
             pop (List[GeneticAgent]):List of gentic actors.
@@ -453,17 +453,17 @@ class SSNE:
             bcs_evals (np.array, optional): List of behavioural characteristics (tuples) of each actor. Defaults to None.
 
         Raises:
-            NotImplementedError: Unknwon operator use for crossover or mutation. 
-        """        
+            NotImplementedError: Unknwon operator use for crossover or mutation.
+        """
         # NOTE fitness and bcs arrays remain unsorted
 
-        index_rank = np.argsort(fitness_evals)[::-1]  
+        index_rank = np.argsort(fitness_evals)[::-1]
         elitist_index = index_rank[:self.num_elitists]  # Elitist indexes safeguard -- first indeces
         # print('Elites:', elitist_index)
 
         '''    Selection   '''
         # offsprings are kept for crossover and mutation together with elites
-        offsprings = self.selection_tournament(index_rank, 
+        offsprings = self.selection_tournament(index_rank,
                                                num_offsprings=len(index_rank) - self.num_elitists,
                                                tournament_size=3)
 
@@ -478,13 +478,13 @@ class SSNE:
         # COMPUTE RL_SELECTION RATE
         if self.rl_policy is not None: # RL Transfer happened
             self.selection_stats['total'] += 1.0
-            
+
             if self.rl_policy in elitist_index: self.selection_stats['elite'] += 1.0
             elif self.rl_policy in offsprings: self.selection_stats['selected'] += 1.0
             elif self.rl_policy in unselects: self.selection_stats['discarded'] += 1.0
             self.rl_policy = None
 
-        # Elitism 
+        # Elitism
         # >> assigning elite candidates to some unselects
         for i in elitist_index:
             try: replacee = unselects.pop(0)
@@ -494,7 +494,7 @@ class SSNE:
 
         ''' Crossover '''
         # >> between elite and offsprings for the unselected genes with 100 percent probability
-        # >> offspring gets an empty buffer 
+        # >> offspring gets an empty buffer
         if self.args.distil_crossover:
             if 'fitness' in self.args.distil_type.lower():
                 sorted_groups = SSNE.sort_groups_by_fitness(new_elitists + offsprings, fitness_evals)
@@ -514,7 +514,7 @@ class SSNE:
                 self.clone(offspring, pop[unselected_actor])
         else:
             if len(unselects) % 2 != 0:  # Number of unselects left should be even
-                unselects.append(unselects[fastrand.pcg32bounded(len(unselects))])
+                unselects.append(unselects[random.randint(0,len(unselects))])
             for i, j in zip(unselects[0::2], unselects[1::2]):
                 off_i = random.choice(new_elitists)
                 off_j = random.choice(offsprings)
@@ -533,7 +533,7 @@ class SSNE:
 
         '''   Mutation  '''
         #  Mutate all genes in the population  EXCEPT the new elitists
-        # -> buffer is kept 
+        # -> buffer is kept
         for i in index_rank[self.num_elitists:]:
             if random.random() < self.args.mutation_prob:
                 self.mutate(pop[i], mag=self.args.mutation_mag)
@@ -589,5 +589,3 @@ class PopulationStats:
         for k in self.data:
             self.data[k] = []
         self.generation += 1
-
-
