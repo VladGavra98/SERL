@@ -20,21 +20,16 @@ Recent research in bio-inspired artificial intelligence potentially provides sol
 ## Module Installation Instructions
 1. Create and activate a python virtual environment in project root (optional):
    ```bash
-   python -m venv venv
+   python3.8 -m venv venv
    ```
 2. Install the cloned repo as a local module:
 
-   For use:
+   For use and development:
 
    ```bash
-   python setup.py install
+   python3.8 -m pip install -r requirements.txt
    ```
 
-   For development:
-
-   ```bash
-   python setup.py develop
-   ```
 
 ## Usage
 ### Evaluating pre-trained agents:
