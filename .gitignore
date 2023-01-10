@@ -215,3 +215,10 @@ profile_default/
 ipython_config.py
 __pycache__/__init__.cpython-38.pyc
 __pycache__/lunarlander.cpython-38.pyc
+base/__pycache__/parameters.cpython-38.pyc
+.gitignore
+base/core/__pycache__/replay_memory.cpython-38.pyc
+base/core/__pycache__/utils.cpython-38.pyc
+base/core/__pycache__/mod_utils.cpython-38.pyc
+base/core/__pycache__/genetic_agent.cpython-38.pyc
+base/core/__pycache__/mod_utils.cpython-38.pyc
