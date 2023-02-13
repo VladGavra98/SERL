@@ -4,7 +4,7 @@
 [![Python](https://shields.io/badge/python-3.8-blue.svg?style=for-the-badge)]()
 [![License](https://shields.io/badge/Licence-MIT-green?style=for-the-badge)]()
 
-Authors: [Vlad Gavra](https://github.com/CasperTeirlinck](https://github.com/VladGavra98/) &nbsp; [![LinkedIn](https://shields.io/badge/LinkedIn--blue?style=social&logo=linkedin)](https://www.linkedin.com/in/vlad-gavra-home/)
+Authors: [Vlad Gavra](https://github.com/VladGavra98/) &nbsp; [![LinkedIn](https://shields.io/badge/LinkedIn--blue?style=social&logo=linkedin)](https://www.linkedin.com/in/vlad-gavra-home/)
 
 
 
