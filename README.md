@@ -68,7 +68,7 @@ The link to Scientific Thesis: https://bit.ly/3D7mj0i
 
 - K. Dally and E.-J. Van Kampen, “Soft Actor-Critic Deep Reinforcement Learning for Fault Tolerant Flight Control”, 2021 [[paper](https://arxiv.org/abs/2202.09262)]
 
-<!-- - T. Haarnoja, A. Zhou, P. Abbeel, and S. Levine, “Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor” [[paper](http://arxiv.org/abs/1801.01290)] 
+<!-- - T. Haarnoja, A. Zhou, P. Abbeel, and S. Levine, “Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor” [[paper](http://arxiv.org/abs/1801.01290)] -->
 
 - S. Fujimoto, H. van Hoof, D. Meger, "Addressing Function Approximation Error in Actor-Critic Methods", 2018 [[paper](https:arXiv:1802.09477](https://arxiv.org/abs/1802.09477))] 
 
