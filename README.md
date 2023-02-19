@@ -54,7 +54,7 @@ Recent research in bio-inspired artificial intelligence potentially provides sol
 ## Samples
 Here are 80s time-traces of the aircraft states and computed control signals (elevaotr, aileron nd rudder deflection signals) when the palnt is controlled by the TD3 actor (left) and the SERL(50) champion( right). The flight conditions are H=2,000 m and V=90 m/s, corresponding to the trim setting used during training. 
 <p align="center">
-  <img src="logs/wandb/run-20221102_144601-1dixcrrl_TD3/figures/nominal/rl_nominal.png" width="500"/>
+  <img src="logs/wandb/run-20221102_144601-1dixcrrl_TD3/figures/nominal/rl_nominal.png" width="500"/> 
   <img src="logs/wandb/run-20220924_144643-1xzaqiba_SERL50/figures/nominal/actor18_nominal.png" width="500"/>
 </p>
 
