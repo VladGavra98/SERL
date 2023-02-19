@@ -12,6 +12,8 @@ This repository contains the source code used to train and evalaute the **SERL**
 
 The learning environment wraps the **DASMAT** framework which provides a high-fidelity non-linear model of a fixed-wing aircraft. The models has been validated by fligh-testing using the PH-LAB, a Cessna Citation II research aircraft jointly owned between the TU Delft Faculty of Aerospace Engineering and Netherlands Aerospace Centre (NLR). The environment can be configured in 3 trim condtions whereas 6 different sub-system fautls can be simulated.
 
+SERL's perfroamnce has been comapred agsint the TD3 algorithm, an off-policy actor-critic method. Both frameworks train on comparable nubmer of environment interactions which are scaled by the nubmer of actors. The relevant hyperparameters are tuned for maximum average episodic performance using Bayesian Optimisation on randomly sampled grids.
+
 
 ## Paper Abstract
 Recent research in bio-inspired artificial intelligence potentially provides solutions to the challenging problem of designing fault-tolerant and robust flight control systems. The current work proposes SERL, a novel Safety-informed Evolutionary Reinforcement Learning algorithm, which combines Deep Reinforcement Learning and neuro-evolutionary mechanisms. This hybrid method optimises a diverse population of non-linear control policies through both evolutionary mechanisms and gradient-based updates. We apply it to solve the attitude tracking task on a high-fidelity non-linear fixed-wing aircraft model. Compared to a state-of-the-art DRL solution, SERL achieves better tracking performance in nine out of ten cases, remaining robust against faults, changes in flight conditions and external disturbances. Furthermore, the work shows how evolutionary mechanisms can balance performance with the smoothness of control actions, a feature relevant for bridging the gap between simulation and deployment on real flight hardware.
@@ -52,8 +54,8 @@ Recent research in bio-inspired artificial intelligence potentially provides sol
 ## Samples
 Here are 80s time-traces of the aircraft states and computed control signals (elevaotr, aileron nd rudder deflection signals) when the palnt is controlled by the TD3 actor (left) and the SERL(50) champion( right). The flight conditions are H=2,000 m and V=90 m/s, corresponding to the trim setting used during training. 
 <p align="center">
-  <img src="logs/wandb/run-20221102_144601-1dixcrrl_TD3/figures/nominal/rl_nominal.png" width="298"/>
-  <img src="logs/wandb/run-20220924_144643-1xzaqiba_SERL50/figures/nominal/actor18_nominal.png" width="298"/>
+  <img src="logs/wandb/run-20221102_144601-1dixcrrl_TD3/figures/nominal/rl_nominal.png" width="350"/>
+  <img src="logs/wandb/run-20220924_144643-1xzaqiba_SERL50/figures/nominal/actor18_nominal.png" width="350"/>
 </p>
 
 
