@@ -8,13 +8,13 @@ Authors: [Vlad Gavra](https://github.com/VladGavra98/) &nbsp; [![LinkedIn](https
 
 
 
-This repository contains the source code used to develop the **SERL** framework which combines TD3 and a genetic algorithm.
+This repository contains the source code used to train and evalaute the **SERL** framework which combines TD3 and a genetic algorithm.
 
-The environment wraps the **DASMAT** framework which h provides a high-fidelity non-linear model of a fixed-wing aircraft. It has been validated by fligh-testing using the PH-LAB (Cessna Citation II) research aircraft jointly owned between the TU Delft Faculty of Aerospace Engineering and Netherlands Aerospace Centre (NLR).
+The learning environment wraps the **DASMAT** framework which provides a high-fidelity non-linear model of a fixed-wing aircraft. The models has been validated by fligh-testing using the PH-LAB, a Cessna Citation II research aircraft jointly owned between the TU Delft Faculty of Aerospace Engineering and Netherlands Aerospace Centre (NLR). The environment can be configured in 3 trim condtions whereas 6 different sub-system fautls can be simulated.
 
 
 ## Paper Abstract
-Recent research in bio-inspired artificial intelligence potentially provides solutions to the challenging problem of designing fault-tolerant and robust flight control systems. The current work proposes SERL, a novel Safety-informed Evolutionary Reinforcement Learning algorithm, which combines Deep Reinforcement Learning (DRL) and neuro-evolutionary mechanisms. This hybrid method optimises a diverse population of non-linear control policies through both evolutionary mechanisms and gradient-based updates. We apply it to solve the attitude tracking task on a high-fidelity non-linear fixed-wing aircraft model. Compared to a state-of-the-art DRL solution, SERL achieves better tracking performance in nine out of ten cases, remaining robust against faults, changes in initial conditions and external disturbances. Furthermore, the work shows how evolutionary mechanisms can balance performance with the smoothness of control actions, a feature relevant for bridging the gap between simulation and deployment on real flight hardware.
+Recent research in bio-inspired artificial intelligence potentially provides solutions to the challenging problem of designing fault-tolerant and robust flight control systems. The current work proposes SERL, a novel Safety-informed Evolutionary Reinforcement Learning algorithm, which combines Deep Reinforcement Learning and neuro-evolutionary mechanisms. This hybrid method optimises a diverse population of non-linear control policies through both evolutionary mechanisms and gradient-based updates. We apply it to solve the attitude tracking task on a high-fidelity non-linear fixed-wing aircraft model. Compared to a state-of-the-art DRL solution, SERL achieves better tracking performance in nine out of ten cases, remaining robust against faults, changes in flight conditions and external disturbances. Furthermore, the work shows how evolutionary mechanisms can balance performance with the smoothness of control actions, a feature relevant for bridging the gap between simulation and deployment on real flight hardware.
 
 
 ## Module Installation Instructions
@@ -36,7 +36,7 @@ Recent research in bio-inspired artificial intelligence potentially provides sol
 - `python3.8 ./base/evaluate.py -agent_name=$AGENT_NAME$ -env=$ENV_NAME$ -save_stats`
 > - available agents: SERL50, SERL10, TD3
 >
-> - available environment: nominal, low-q, high-q, gust, cg (CG aft-shifted), be (broken elevator), jr (jammed rudder), sa (saturated aileron), se (saturated elevator), ice (ice on wings)
+> - available environment configurations: nominal (H=2km,V=90m/s), low-q (H=10km, V=90m/s), high-q (H=2km,V=150m/s), gust (external disturbance of 15ft/s up-pointing  wind gust), cg (CG aft-shifted), be (broken elevator), jr (jammed rudder), sa (saturated aileron), se (saturated elevator), ice (ice on wings)
 >
 > - which part of the agent to evaluate:
 >  eval_rl /
