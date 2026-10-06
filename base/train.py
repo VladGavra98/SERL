@@ -1,8 +1,19 @@
 import os
+import sys
 import argparse
 import time
 import random
 import numpy as np
+
+# Anchor this script's directory (base/) and the repo root on the path so that
+# the top-level packages (core, parameters, ...) and envs resolve independently
+# of the current working directory.
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_ROOT_DIR = os.path.abspath(os.path.join(_BASE_DIR, os.pardir))
+for _p in (_BASE_DIR, _ROOT_DIR):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
 from core import agent
 import torch
 from parameters import Parameters
