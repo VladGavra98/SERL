@@ -12,7 +12,7 @@ import numpy as np
 import torch
 
 class Agent:
-    """ Inteligent controller agent. It manages both the population and the RL parts. """
+    """ Intelligent controller agent. It manages both the population and the RL parts. """
 
     def __init__(self, args: Parameters, environment):
         self.args = args
@@ -20,6 +20,7 @@ class Agent:
 
         # Init population
         self.pop: List = []
+        
         self.pop = [genetic_agent.GeneticAgent(
             args) for _ in range(args.pop_size)]
 
@@ -41,8 +42,8 @@ class Agent:
             self.noise_process = mod_utils.GaussianNoise(
                 args.action_dim, sd=args.noise_sd)
 
-        # Initialise evolutionary loop
-        if not self.pop:
+        # Initialise evolutionary loop (only when a population is present)
+        if self.pop:
             self.evolver = utils_ne.SSNE(
                 self.args, self.rl_agent.critic, self.evaluate)
 
@@ -223,9 +224,11 @@ class Agent:
         elite_index = -1.
         pop_novelty = -1.
         lengths = []
+    
+        pop_fitness = np.zeros_like(self.pop)
 
         '''++++++++++++++++++++++++++++++   Evolution   ++++++++++++++++++++++++++++++++++'''
-        if not self.pop:
+        if self.pop:
             fitness_lst = np.zeros((self.args.num_evals, self.args.pop_size))
             smoothness_lst = []
 
@@ -323,7 +326,7 @@ class Agent:
                         Defaults to None.
         """
         # Save gentic popualtion
-        if not self.pop.isEmpty():
+        if self.pop:
             pop_dict = {}
             for i, ind in enumerate(self.pop):
                 pop_dict[f'actor_{i}'] = ind.actor.state_dict()

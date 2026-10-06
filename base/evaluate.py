@@ -13,9 +13,6 @@ import matplotlib.pyplot as plt
 import torch
 import signals
 
-# Anchor this script's directory (base/) and the repo root on the path so that
-# the top-level packages (core, parameters, ...) and envs resolve independently
-# of the current working directory.
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _ROOT_DIR = os.path.abspath(os.path.join(_BASE_DIR, os.pardir))
 for _p in (_BASE_DIR, _ROOT_DIR):
@@ -27,7 +24,8 @@ from parameters import Parameters
 from evaluation_utils import Stats, load_pop, load_rl_agent, gen_refs, find_logs_path
 from plotters.plot_utils import plot
 
-# my modules
+
+import envs   # gym-like learning env
 import envs.config
 
 # current module

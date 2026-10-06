@@ -1,0 +1,60 @@
+# This is a TOML document
+title = "Smoothness"
+
+
+[zesty_CAPS_rl]
+path           = "vgavra/CAPS/1dgu6jus"
+name           = 'TD3 - CAPS'
+# sm = -344.2960229984458
+# sm_sd = 48.79411793655151
+sm     = -722
+sm_std = 104.2
+
+
+[zesty_nocaps_rl]
+# path           = "vgavra/CAPS/3o7akmlp"
+path = "vgavra/CAPS/2zzrh6v8"
+name           = "TD3"
+# sm = -1531.5646219878993
+# sm_sd = 147.85179138810408
+sm     = -1582
+sm_std = 123.1
+
+[glad_full_erl]
+path           = "vgavra/CAPS/22gkhoav"
+name           = 'SERL(10) - CAPS + SF'
+sm     = -77.55
+sm_std = 24.5
+
+
+[glad_caps_erl]
+path           = "vgavra/CAPS/1i7qvma0"
+name           = "SERL(10) - CAPS"
+sm     = -111.1
+sm_std = 87.0
+
+[glad_smooth_erl]
+path           = "vgavra/CAPS/1vxlu81a"
+name           = "SERL(10) - SF"
+sm     = -202.4
+sm_std = 480.6
+
+[glad_nocaps_erl]
+path           = "vgavra/CAPS/3pfmuq7c"
+name           = 'SERL(10)'
+sm     = -1271.61
+sm_std = 87.22
+
+[laced_long_erl]
+path           = "vgavra/CAPS/5jsfh71q"
+name           = "SERL(50)"
+sm     = -25.92
+sm_std = 7.034
+# sm = -2.865532649001116
+# sm_sd = 0.6817564511707414
+
+[laced_full_erl]
+path           = "vgavra/CAPS/2o7iaxvo"
+name           = "SERL(50) - SF"
+sm     = -39   # taken from wandb
+sm_std =  65    # taken from wandb
