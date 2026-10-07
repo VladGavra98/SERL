@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 
 import plotters.mystyle as mystyle
 
@@ -102,10 +103,10 @@ def plot(data, name='Actor', data_in_deg: bool = False, **kwargs):
 
     # axis settings
     for ax in axs:
-        ax[0].yaxis.set_major_formatter("{x:2.1f}")
+        ax[0].yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:2.1f}"))
         ax[0].locator_params(axis='y', nbins=5)
         ax[0].locator_params(axis='x', nbins=8)
-        ax[1].yaxis.set_major_formatter("{x:2.1f}")
+        ax[1].yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:2.1f}"))
         ax[1].locator_params(axis='y', nbins=5)
         ax[0].set_xlim(-0.1, time[-1])
         ax[1].set_xlim(-0.1, time[-1])
@@ -216,9 +217,9 @@ def plot_long(data, name='Actor', data_in_deg: bool = False, **kwargs):
                frameon=True)
 
     # axis settings
-    axs[0].yaxis.set_major_formatter("{x:2.1f}")
+    axs[0].yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:2.1f}"))
     axs[0].locator_params(axis='y', nbins=5)
-    axs[1].yaxis.set_major_formatter("{x:2.1f}")
+    axs[1].yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:2.1f}"))
     axs[1].locator_params(axis='y', nbins=5)
     axs[0].set_xlim(-0.1, time[-1])
     axs[1].set_xlim(-0.1, time[-1])
@@ -312,9 +313,9 @@ def plot_diff(data: np.ndarray, old_data: np.ndarray, name='Actor', data_in_deg:
                edgecolor='black')
 
     # axis settings
-    axs[0].yaxis.set_major_formatter("{x:2.1f}")
+    axs[0].yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:2.1f}"))
     axs[0].locator_params(axis='y', nbins=5)
-    axs[1].yaxis.set_major_formatter("{x:2.1f}")
+    axs[1].yaxis.set_major_formatter(mticker.StrMethodFormatter("{x:2.1f}"))
     axs[1].locator_params(axis='y', nbins=5)
     # axs[0].set_xlim(18, 26)
     # axs[1].set_xlim(18, 26)

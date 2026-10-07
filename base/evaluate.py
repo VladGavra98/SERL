@@ -11,7 +11,6 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
-import signals
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _ROOT_DIR = os.path.abspath(os.path.join(_BASE_DIR, os.pardir))
@@ -27,6 +26,7 @@ from plotters.plot_utils import plot
 
 import envs   # gym-like learning env
 import envs.config
+import signals  
 
 # current module
 parser = argparse.ArgumentParser()

@@ -22,7 +22,6 @@ import envs
 import envs.config
 
 
-# -store_true means that it becomes true if I mention the argument
 parser = argparse.ArgumentParser()
 
 parser.add_argument('-should_log', help='Wether the WandB loggers are used', action='store_true')
