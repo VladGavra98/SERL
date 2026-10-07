@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
@@ -144,6 +145,15 @@ def plot(data, name='Actor', data_in_deg: bool = False, **kwargs):
                                      linestyle=constraint_style, xmin=-0.1, xmax=time[-1] + 0.1, alpha=0.8)
             axs[0, 1].legend(loc='upper left', handles=[hline], fontsize=19, frameon=False,
                              edgecolor='black', labels=['Saturation Limit'])
+
+    # save figure to disk (default location is the local tmp/ folder)
+    if kwargs.get('savefigure'):
+        fname = kwargs['savefigure']
+        
+        fname = os.path.join('tmp', fname)
+        
+        fig.savefig(fname, dpi=300, format='png')
+        plt.close(fig)
 
     return fig, axs
 

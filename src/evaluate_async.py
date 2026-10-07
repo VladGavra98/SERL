@@ -1,4 +1,10 @@
-"""  Validation script """
+"""  Validation script for asynchronous control.
+
+    Identical to evaluate.py but the environment is configured so that a control
+    signal is refreshed every `control_period` seconds (default 0.1 s -> 10 Hz)
+    while the simulator advances at 100 Hz (dt=0.01 s). The control input is held
+    (zero-order hold) over the intervening simulation substeps.
+"""
 import argparse
 from copy import deepcopy, copy
 import os
@@ -9,7 +15,6 @@ import warnings
 import toml
 from tqdm import tqdm
 import numpy as np
-import matplotlib.pyplot as plt
 import torch
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -26,26 +31,30 @@ from plotters.plot_utils import plot
 
 import envs   # gym-like learning env
 import envs.config
-import signals  
+import signals
 
 # current module
 parser = argparse.ArgumentParser()
-parser.add_argument('-env', help='Environment Choices: (LunarLanderContinuous-v2) (PHLab)',
+parser.add_argument('-E','--env', help='Environment Choices: (LunarLanderContinuous-v2) (PHLab)',
                     type=str, default='PHlab_attitude_nominal')
 parser.add_argument('-seed', help='Random seed to be used',
                     type=int, default=7)
 parser.add_argument('-disable_cuda', help='Disables CUDA',
                     action='store_true', default=True)
-parser.add_argument('-agent_name', help='Path to the agent to be evaluated',type = str,
-                    required = True)
+parser.add_argument('-name', '--agent_name', help='Path to the agent to be evaluated', type=str,
+                    required=True)
+
+parser.add_argument('-control_period', help='Control update period [s]. The control signal is '
+                    'refreshed at this rate while the simulation advances at dt=0.01 s (100 Hz). '
+                    'Default 0.1 s -> 10 Hz control.', type=float, default=0.1)
 
 parser.add_argument('-eval_pop', default=False, action='store_true')
 parser.add_argument('-eval_actor', default=False, action='store_true')
 parser.add_argument('-index', type=int)
 parser.add_argument('-eval_rl', default=False, action='store_true')
 
+parser.add_argument('-save_plots', default=True)
 parser.add_argument('-plot_hist', default=False, action='store_true')
-parser.add_argument('-save_plots', default=False, action='store_true')
 parser.add_argument('-save_stats', default=False, action='store_true')
 parser.add_argument('-save_trajectory', default=False, action='store_true')
 parser.add_argument('-plot_spectra', default=False, action='store_true')
@@ -62,6 +71,9 @@ parameters = Parameters(cla)
 t_max = 80
 env = envs.config.select_env(cla.env)
 env.set_eval_mode(t_max=t_max)
+env.set_control_period(cla.control_period)
+print(f'Asynchronous control: control refreshed every {env.control_period:g} s '
+      f'({env.n_steps_per_control} simulation substeps per control interval)')
 
 
 def evaluate(actor, **kwargs: dict):
@@ -158,7 +170,6 @@ def validate_agent(gen_agent, user_refs_lst: list, num_trails: int = 1, **kwargs
     return data, stats
 
 
-
 def main():
     # Seed
     env.seed(parameters.seed)
@@ -176,7 +187,6 @@ def main():
     # Time set-points
     time_array = np.linspace(0., t_max, 6)
 
-
     # Pitch set-points:
     amp1 = [0, 12, 3, -4, -8, 2]
     base_ref_theta = signals.SmoothedStepSequence(
@@ -187,14 +197,12 @@ def main():
     base_ref_phi = signals.SmoothedStepSequence(
         time_array, amp2, smooth_width=t_max//10)
 
-
     # Build list of reference tuples from seed
     theta_refs = gen_refs(t_max, time_array, 12.0, num_trails=cla.num_trails)
     phi_refs = gen_refs(t_max, time_array, 10.0, num_trails=cla.num_trails)
     theta_refs.append(base_ref_theta)
     phi_refs.append(base_ref_phi)
     user_eval_refs = list(zip(theta_refs, phi_refs))
-
 
     # Load agent info
     logs_dir = find_logs_path(cla.agent_name)
@@ -210,6 +218,7 @@ def main():
     parameters.stdout()
 
     '''              Load Population              '''
+    pop = []
     if cla.eval_pop or cla.eval_actor:
         pop = load_pop(logs_dir, args=parameters)
 
@@ -223,29 +232,20 @@ def main():
 
         data, stats = validate_agent(
             pop[idx], user_eval_refs, cla.num_trails, stdout=True, plot_spectra=cla.plot_spectra)
-        _fig, _ = plot(
-            data, name=f'nMAE: {stats.nmae:0.1f}%      Smoothness: {stats.sm:0.0f}', fault=fault_name)
-
-        if cla.save_plots:
-            if not os.path.exists(figpath):
-                os.mkdir(figpath)
-            if not os.path.exists(faultpath):
-                os.mkdir(faultpath)
-            figname = faultpath / Path(f'actor{idx}'+'_' + fault_name + '.png')
-            _fig.savefig(fname=figname, dpi=300, format='png')
-            plt.close()
-        else:
-            plt.show()
+        plot(
+            data, name=f'nMAE: {stats.nmae:0.1f}%      Smoothness: {stats.sm:0.0f}', fault=fault_name,
+            savefigure=f'actor{idx}_{fault_name}.png' if cla.save_plots else None)
 
         # Save trajectories on base reference
-        if cla.save_trajectory: save_trajecotry(faultpath, data)
-
+        if cla.save_trajectory:
+            save_trajecotry(faultpath, data)
 
     elif cla.eval_pop:
         '''              Entire Population Evaluation                '''
         nmae_lst, sm_lst = [], []
 
         nmae_min = 500
+        champion_data = None
 
         for i, agent in enumerate(pop):
             print('Actor:', i)
@@ -265,23 +265,11 @@ def main():
 
         # Plot the champion actor
         print('Champion:', idx)
-        champ_fig, _ = plot(
-            champion_data, name=rf'nMAE: {champ_stats.nmae:0.1f}%      Smoothness: {champ_stats.sm:0.0f}', fault=fault_name)
+        plot(
+            champion_data, name=rf'nMAE: {champ_stats.nmae:0.1f}%      Smoothness: {champ_stats.sm:0.0f}', fault=fault_name,
+            savefigure=f'champion_actor{idx}_{fault_name}.png' if cla.save_plots else None)
 
-        if cla.save_plots:
-            if not os.path.exists(figpath):
-                os.mkdir(figpath)
-            if not os.path.exists(faultpath):
-                os.mkdir(faultpath)
-            figname = faultpath / \
-                Path('champion'+'_' + 'actor' +
-                     f'{idx}' + '_' + fault_name + '.png')
-            champ_fig.savefig(fname=figname, dpi=300, format='png')
-            plt.close()
-        else:
-            plt.show()
-
-        print("Popualtion stats:")
+        print("Population stats:")
         print(
             f'Average nMAE: {np.average(nmae_lst):0.1f}  with SD: {np.std(nmae_lst):0.1f}')
         print(
@@ -289,16 +277,16 @@ def main():
 
         '''   Save data to files '''
         if cla.save_stats:
-            # sm and nmae for entire popualtion
+            # sm and nmae for entire population
             save_path = faultpath / Path('final_performance.csv')
-            with open(save_path, 'w+',  encoding='utf-8') as fp:
+            with open(save_path, 'w+', encoding='utf-8') as fp:
                 for _sm, _nmae in zip(sm_lst, nmae_lst):
                     fp.write(f"{_sm},{_nmae}\n")   # save  to csv
             fp.close()
 
             # full statistics to
             toml_path = logs_dir / Path('stats.toml')
-            stats_dict = {fault_name:  {
+            stats_dict = {fault_name: {
                 'champion_idx': idx,
                 'champion': champ_stats.__dict__,
                 'average': {
@@ -326,19 +314,9 @@ def main():
             rl_agent, user_eval_refs, cla.num_trails, stdout=True, plot_spectra=cla.plot_spectra)
 
         # Plot the RL actor
-        rl_fig, _ = plot(
-            data_rl, name=f'nMAE: {rl_stats.nmae:0.1f}%      Smoothness: {rl_stats.sm:0.0f}', fault=fault_name)
-
-        if cla.save_plots:
-            if not os.path.exists(figpath):
-                os.mkdir(figpath)
-            if not os.path.exists(faultpath):
-                os.mkdir(faultpath)
-            figname = faultpath / Path('rl'+'_' + fault_name + '.png')
-            rl_fig.savefig(fname=figname, dpi=300, format='png')
-            plt.close()
-        else:
-            plt.show()
+        plot(
+            data_rl, name=f'nMAE: {rl_stats.nmae:0.1f}%      Smoothness: {rl_stats.sm:0.0f}', fault=fault_name,
+            savefigure=f'rl_{fault_name}.png' if cla.save_plots else None)
 
         '''   Save data to files '''
         if cla.save_stats:
@@ -352,17 +330,19 @@ def main():
             f.close()
 
         # Save trajectories on base reference
-        if cla.save_trajectory: save_trajecotry(faultpath, data_rl)
+        if cla.save_trajectory:
+            save_trajecotry(faultpath, data_rl)
 
     else:
-        warnings.warn('The command does not specify which part of the agent to evalaute. Please add one of the following args: [-eval_pop] [-eval_actor] [-eval_rl]')
+        warnings.warn('The command does not specify which part of the agent to evaluate. Please add one of the following args: [-eval_pop] [-eval_actor] [-eval_rl]')
+
 
 def save_trajecotry(faultpath, data):
     save_path = faultpath / Path('nominal_trajectory.csv')
     with open(save_path, 'w+', encoding='utf-8') as fp:
         np.savetxt(fp, data)
 
-    print(f'Trajcegory saved as: {save_path}')
+    print(f'Trajectory saved as: {save_path}')
     fp.close()
 
 

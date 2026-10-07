@@ -21,7 +21,7 @@ def select_env (environemnt_name : str):
         else:
             phlab_config = tokens[-1]
             phlab_mode = ""
-
+        
         return CitationEnv(configuration = phlab_config, mode = phlab_mode)
 
     else:
