@@ -12,7 +12,7 @@ def plot(data, name='Actor', data_in_deg: bool = False, **kwargs):
     plt.rcParams['xtick.labelsize'] = 18
     plt.rcParams['ytick.labelsize'] = 18
 
-    # smoothehing options
+    # smoothening options
     skip_index = 1
     kernel_size = 2
     kernel = np.ones(kernel_size) / kernel_size

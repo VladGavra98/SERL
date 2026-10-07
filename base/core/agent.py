@@ -135,7 +135,7 @@ class Agent:
             fitness += smoothness
 
         return Episode(fitness=fitness, smoothness=smoothness, length=info['t'],
-                       state_history=state_lst, ref_signals=info['ref'],
+                       state_history=state_lst, ref_signals=self.env.ref,
                        actions=actions, reward_lst=rewards)
 
     def rl_to_evo(self, rl_agent: ddpg.DDPG or td3.TD3, evo_net: genetic_agent.GeneticAgent):
