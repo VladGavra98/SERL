@@ -2,23 +2,30 @@
 import argparse
 from copy import deepcopy, copy
 import os
+import sys
 from pathlib import Path
 import random
 import warnings
 import toml
 from tqdm import tqdm
 import numpy as np
-import matplotlib.pyplot as plt
 import torch
-import signals
+
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_ROOT_DIR = os.path.abspath(os.path.join(_BASE_DIR, os.pardir))
+for _p in (_BASE_DIR, _ROOT_DIR):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 from core.utils import calc_nMAE, calc_smoothness, load_config
 from parameters import Parameters
 from evaluation_utils import Stats, load_pop, load_rl_agent, gen_refs, find_logs_path
 from plotters.plot_utils import plot
 
-# my modules
+
+import envs   # gym-like learning env
 import envs.config
+import signals  
 
 # current module
 parser = argparse.ArgumentParser()
@@ -215,19 +222,9 @@ def main():
 
         data, stats = validate_agent(
             pop[idx], user_eval_refs, cla.num_trails, stdout=True, plot_spectra=cla.plot_spectra)
-        _fig, _ = plot(
-            data, name=f'nMAE: {stats.nmae:0.1f}%      Smoothness: {stats.sm:0.0f}', fault=fault_name)
-
-        if cla.save_plots:
-            if not os.path.exists(figpath):
-                os.mkdir(figpath)
-            if not os.path.exists(faultpath):
-                os.mkdir(faultpath)
-            figname = faultpath / Path(f'actor{idx}'+'_' + fault_name + '.png')
-            _fig.savefig(fname=figname, dpi=300, format='png')
-            plt.close()
-        else:
-            plt.show()
+        plot(
+            data, name=f'nMAE: {stats.nmae:0.1f}%      Smoothness: {stats.sm:0.0f}', fault=fault_name,
+            savefigure=f'actor{idx}_{fault_name}.png' if cla.save_plots else None)
 
         # Save trajectories on base reference
         if cla.save_trajectory: save_trajecotry(faultpath, data)
@@ -257,21 +254,9 @@ def main():
 
         # Plot the champion actor
         print('Champion:', idx)
-        champ_fig, _ = plot(
-            champion_data, name=rf'nMAE: {champ_stats.nmae:0.1f}%      Smoothness: {champ_stats.sm:0.0f}', fault=fault_name)
-
-        if cla.save_plots:
-            if not os.path.exists(figpath):
-                os.mkdir(figpath)
-            if not os.path.exists(faultpath):
-                os.mkdir(faultpath)
-            figname = faultpath / \
-                Path('champion'+'_' + 'actor' +
-                     f'{idx}' + '_' + fault_name + '.png')
-            champ_fig.savefig(fname=figname, dpi=300, format='png')
-            plt.close()
-        else:
-            plt.show()
+        plot(
+            champion_data, name=rf'nMAE: {champ_stats.nmae:0.1f}%      Smoothness: {champ_stats.sm:0.0f}', fault=fault_name,
+            savefigure=f'champion_actor{idx}_{fault_name}.png' if cla.save_plots else None)
 
         print("Popualtion stats:")
         print(
@@ -318,19 +303,9 @@ def main():
             rl_agent, user_eval_refs, cla.num_trails, stdout=True, plot_spectra=cla.plot_spectra)
 
         # Plot the RL actor
-        rl_fig, _ = plot(
-            data_rl, name=f'nMAE: {rl_stats.nmae:0.1f}%      Smoothness: {rl_stats.sm:0.0f}', fault=fault_name)
-
-        if cla.save_plots:
-            if not os.path.exists(figpath):
-                os.mkdir(figpath)
-            if not os.path.exists(faultpath):
-                os.mkdir(faultpath)
-            figname = faultpath / Path('rl'+'_' + fault_name + '.png')
-            rl_fig.savefig(fname=figname, dpi=300, format='png')
-            plt.close()
-        else:
-            plt.show()
+        plot(
+            data_rl, name=f'nMAE: {rl_stats.nmae:0.1f}%      Smoothness: {rl_stats.sm:0.0f}', fault=fault_name,
+            savefigure=f'rl_{fault_name}.png' if cla.save_plots else None)
 
         '''   Save data to files '''
         if cla.save_stats:

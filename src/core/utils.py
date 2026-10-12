@@ -28,8 +28,7 @@ class Episode:
             np.ndarray: Time traces array: [refs, actions, states, reward] with shape (ep_len, 14)
         """
         tt = np.linspace(0, self.length, len(self.state_history))
-        ref_values = np.array([[ref(t_i) for t_i in tt]
-                              for ref in self.ref_signals]).transpose()
+        ref_values = np.array([[ref(t_i) for t_i in tt] for ref in self.ref_signals]).transpose()
         reward_lst = np.asarray(self.reward_lst).reshape(
             (len(self.state_history), 1))
 

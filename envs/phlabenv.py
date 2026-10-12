@@ -19,6 +19,8 @@ def printYellow(skk): print(f"\033[93m {skk}\033[00m")
 class BaseEnv(gym.Env, ABC):
     """ Base class to be able to write generic training & eval code
     that applies to all Citation environment variations. """
+    def __init__():
+        self.t = None 
 
     @property
     @abstractmethod
@@ -81,7 +83,8 @@ class CitationEnv(BaseEnv):
     t: float = 0.
     dt: np.float16 = 0.01
 
-    def __init__(self, configuration: str = None, mode: str = "nominal"):
+    def __init__(self, configuration: str = None, mode: str = "nominal",
+                 control_period: float = None):
 
         if 'symmetric' in configuration.lower():
             print('Symmetric control only.\n')
@@ -179,6 +182,9 @@ class CitationEnv(BaseEnv):
         # Evaluation mode:
         self.eval_mode: bool = False
         self.t_max = 20   # [s]
+
+        # Asynchronous control 
+        self.set_control_period(control_period)
 
         # DASMAT state
         # 0,  1, 2   -> p, q, r
@@ -398,6 +404,21 @@ class CitationEnv(BaseEnv):
             return True, penalty
         return False, 0.
 
+    def set_control_period(self, control_period: float = None) -> None:
+        """ Configure asynchronous control.
+
+        The control signal is refreshed every `control_period` seconds and held
+        (zero-order hold) over `control_period / dt` simulation substeps. With a
+        simulation step of dt=0.01s (100 Hz), setting control_period=0.1 yields a
+        control signal every 10 simulation steps (10 Hz).
+
+        Args:
+            control_period (float, optional): Control update period in seconds.
+                Defaults to None, i.e. dt for synchronous (100 Hz) control.
+        """
+        self.control_period = control_period if control_period is not None else self.dt
+        self.n_steps_per_control = max(1, int(round(self.control_period / self.dt)))
+
     def reset(self, **kwargs) -> np.ndarray:
         # Reset time
         self.t = 0.
@@ -427,27 +448,13 @@ class CitationEnv(BaseEnv):
 
         return self.obs
 
-    def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
-        """ Step function which simualtes one step in time of the agent in the environment.
+    def _sim_step(self, u: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
+        """ Advance the simulator by one sim dt using the given control input u. """
+        # sim time
+        self.t += self.dt
 
-        Args:
-            action (np.ndarray): Un-sclaled action in the interval [-1,1] to be taken.
-
-        Returns:
-            Tuple[np.ndarray, float, bool, dict]: new_state, obtained reward, is_done mask,
-                                     info:{refference signal value, time, cost of step}
-        """
         is_done = False
         self.last_obs = self.obs
-
-        # scale action to actuator rate bounds
-        action = self.scale_action(action)   # scaled to actuator limits
-
-        # incremental control input:
-        if self.use_incremental:
-            u = self.incremental_control(action)
-        else:
-            u = action
 
         # citation step
         _input = self.pad_action(u)
@@ -456,7 +463,7 @@ class CitationEnv(BaseEnv):
         # Reward using clipped error
         reward = self.get_reward()
 
-        # Calcualte cost:
+        # Calculate cost:
         cost = self.get_cost()
 
         # Update observation based on perfect observations & actuator state
@@ -469,10 +476,6 @@ class CitationEnv(BaseEnv):
         is_done, penalty = self.check_bounds()
         reward += penalty
 
-        # Step time:
-        self.t += self.dt
-
-        # info:
         info = {
             "ref":  self.ref_values,
             "x":    self.x,
@@ -480,6 +483,37 @@ class CitationEnv(BaseEnv):
             "cost": cost,
         }
         return self.obs, reward, is_done, info
+
+    def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
+        """ Step function which simulates one control interval of the agent in the environment.
+
+        The control input is refreshed once and held (zero-order hold) over
+        `n_steps_per_control` simulation steps (asynchronous control). Only the
+        observation, reward, done mask and info of the final sim step are returned
+
+        Args:
+            action (np.ndarray): Un-sclaled action in the interval [-1,1] to be taken.
+
+        Returns:
+            Tuple[np.ndarray, float, bool, dict]: new_state, obtained reward, is_done mask,
+                                     info:{reference signal value, time, cost of step}
+        """
+        # scale action to actuator rate bounds
+        action = self.scale_action(action)   
+
+        # incremental control input:
+        if self.use_incremental:
+            u = self.incremental_control(action)
+        else:
+            u = action[:]
+
+        # zero-order hold with breaking
+        for _ in range(self.n_steps_per_control):
+            obs, reward, is_done, info = self._sim_step(u)
+            if is_done:
+                break
+
+        return obs, reward, is_done, info
 
     def finish(self):
         """ Terminate the simulink thing."""

@@ -55,7 +55,7 @@ def gen_refs(t_max: int, amp_times: np.array, ampl_max: float, num_trails: int =
     return refs_lst
 
 
-def find_logs_path(logs_name : str, root_dir : str = './logs/wandb/') -> str:
+def find_logs_path(logs_name : str, root_dir : str = './models/') -> str:
     cwd = os.getcwd()
 
     if not cwd.endswith('SERL'):

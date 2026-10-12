@@ -20,7 +20,7 @@ Recent research in bio-inspired artificial intelligence potentially provides sol
 
 
 ## Module Installation Instructions
-The module was tested on Linux. The .so fies contianed in the environment cannot be loaded on Windows.
+The module was tested on Linux. The .so files contained in the environment cannot be loaded on Windows.
 
 1. Create and activate a python virtual environment in project root (optional):
    ```bash
