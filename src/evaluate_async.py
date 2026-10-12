@@ -44,23 +44,23 @@ parser.add_argument('-disable_cuda', help='Disables CUDA',
 parser.add_argument('-name', '--agent_name', help='Path to the agent to be evaluated', type=str,
                     required=True)
 
-parser.add_argument('-control_period', help='Control update period [s]. The control signal is '
+parser.add_argument('--control_period', help='Control update period [s]. The control signal is '
                     'refreshed at this rate while the simulation advances at dt=0.01 s (100 Hz). '
                     'Default 0.1 s -> 10 Hz control.', type=float, default=0.1)
 
-parser.add_argument('-eval_pop', default=False, action='store_true')
-parser.add_argument('-eval_actor', default=False, action='store_true')
-parser.add_argument('-index', type=int)
-parser.add_argument('-eval_rl', default=False, action='store_true')
+parser.add_argument('--eval_pop', default=False, action='store_true')
+parser.add_argument('--eval_actor', default=False, action='store_true')
+parser.add_argument('--index', type=int)
+parser.add_argument('--eval_rl', default=False, action='store_true')
 
-parser.add_argument('-save_plots', default=True)
-parser.add_argument('-plot_hist', default=False, action='store_true')
-parser.add_argument('-save_stats', default=False, action='store_true')
-parser.add_argument('-save_trajectory', default=False, action='store_true')
-parser.add_argument('-plot_spectra', default=False, action='store_true')
-parser.add_argument('-verbose', default=False, action='store_true')
+parser.add_argument('--save_plots', default=True)
+parser.add_argument('--plot_hist', default=False, action='store_true')
+parser.add_argument('--save_stats', default=False, action='store_true')
+parser.add_argument('--save_trajectory', default=False, action='store_true')
+parser.add_argument('--plot_spectra', default=False, action='store_true')
+parser.add_argument('--verbose', default=False, action='store_true')
 
-parser.add_argument('-num_trails', default=1, type=int)
+parser.add_argument('--num_trails', default=1, type=int)
 
 cla, unknown = parser.parse_known_args()
 
@@ -69,6 +69,7 @@ parameters = Parameters(cla)
 
 # Create Global Env in Validation mode
 t_max = 80
+
 env = envs.config.select_env(cla.env)
 env.set_eval_mode(t_max=t_max)
 env.set_control_period(cla.control_period)
@@ -101,7 +102,7 @@ def evaluate(actor, **kwargs: dict):
 
         ref_value = np.deg2rad(
             np.array([ref(env.t) for ref in env.ref]).flatten())
-        obs, reward, done, _ = env.step(action.flatten())
+        obs, reward, done, info = env.step(action.flatten())
         next_obs = obs
 
         if kwargs.get('verbose'):
@@ -136,6 +137,7 @@ def evaluate(actor, **kwargs: dict):
 
     # Calculate nMAE:
     nmae = calc_nMAE(errors)
+    print('Finished?', done == True, f" - nMAE: {nmae:.1f}%")
 
     return data, nmae, smoothness
 
@@ -183,7 +185,6 @@ def main():
     # Identify fault:
     _, _, fault_name = cla.env.split('_')
 
-    '''             Prepare References             '''
     # Time set-points
     time_array = np.linspace(0., t_max, 6)
 

@@ -19,6 +19,8 @@ def printYellow(skk): print(f"\033[93m {skk}\033[00m")
 class BaseEnv(gym.Env, ABC):
     """ Base class to be able to write generic training & eval code
     that applies to all Citation environment variations. """
+    def __init__():
+        self.t = None 
 
     @property
     @abstractmethod
@@ -181,10 +183,7 @@ class CitationEnv(BaseEnv):
         self.eval_mode: bool = False
         self.t_max = 20   # [s]
 
-        # Asynchronous control: the control signal is updated every
-        # `control_period` [s] and held constant (zero-order hold) over the
-        # intervening simulation substeps. Defaults to dt for synchronous
-        # (100 Hz) control.
+        # Asynchronous control 
         self.set_control_period(control_period)
 
         # DASMAT state
@@ -474,8 +473,7 @@ class CitationEnv(BaseEnv):
         is_done, penalty = self.check_bounds()
         reward += penalty
 
-        # Step time:
-        self.t += self.dt
+        
 
         # info:
         info = {
@@ -500,6 +498,9 @@ class CitationEnv(BaseEnv):
             Tuple[np.ndarray, float, bool, dict]: new_state, obtained reward, is_done mask,
                                      info:{refference signal value, time, cost of step}
         """
+        # sim time
+        self.t += self.dt
+
         # scale action to actuator rate bounds
         action = self.scale_action(action)   # scaled to actuator limits
 

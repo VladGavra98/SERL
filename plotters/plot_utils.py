@@ -39,7 +39,6 @@ def plot(data, name='Actor', data_in_deg: bool = False, **kwargs):
     name = name + r' rad$\cdot$Hz'
     fig.suptitle(name)
 
-    # covner rad/deg if needed
     _convertor = np.rad2deg(1.)
     if data_in_deg:
         _convertor = 1.
