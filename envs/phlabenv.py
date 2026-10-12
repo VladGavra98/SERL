@@ -449,7 +449,10 @@ class CitationEnv(BaseEnv):
         return self.obs
 
     def _sim_step(self, u: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
-        """ Advance the simulator by one dt using the given control input u. """
+        """ Advance the simulator by one sim dt using the given control input u. """
+        # sim time
+        self.t += self.dt
+
         is_done = False
         self.last_obs = self.obs
 
@@ -460,7 +463,7 @@ class CitationEnv(BaseEnv):
         # Reward using clipped error
         reward = self.get_reward()
 
-        # Calcualte cost:
+        # Calculate cost:
         cost = self.get_cost()
 
         # Update observation based on perfect observations & actuator state
@@ -473,9 +476,6 @@ class CitationEnv(BaseEnv):
         is_done, penalty = self.check_bounds()
         reward += penalty
 
-        
-
-        # info:
         info = {
             "ref":  self.ref_values,
             "x":    self.x,
@@ -485,24 +485,21 @@ class CitationEnv(BaseEnv):
         return self.obs, reward, is_done, info
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, dict]:
-        """ Step function which simualtes one control interval of the agent in the environment.
+        """ Step function which simulates one control interval of the agent in the environment.
 
         The control input is refreshed once and held (zero-order hold) over
-        `n_steps_per_control` simulation substeps (asynchronous control). Only the
-        observation, reward, done mask and info of the final substep are returned.
+        `n_steps_per_control` simulation steps (asynchronous control). Only the
+        observation, reward, done mask and info of the final sim step are returned
 
         Args:
             action (np.ndarray): Un-sclaled action in the interval [-1,1] to be taken.
 
         Returns:
             Tuple[np.ndarray, float, bool, dict]: new_state, obtained reward, is_done mask,
-                                     info:{refference signal value, time, cost of step}
+                                     info:{reference signal value, time, cost of step}
         """
-        # sim time
-        self.t += self.dt
-
         # scale action to actuator rate bounds
-        action = self.scale_action(action)   # scaled to actuator limits
+        action = self.scale_action(action)   
 
         # incremental control input:
         if self.use_incremental:

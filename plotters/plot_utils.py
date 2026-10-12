@@ -8,7 +8,7 @@ import plotters.mystyle as mystyle
 from plotters.mystyle import *
 
 
-def plot(data, name='Actor', data_in_deg: bool = False, **kwargs):
+def plot(data, name='Actor', data_in_deg: bool = False, dt:float = 0.01, **kwargs):
     # hange these here
     plt.rcParams['xtick.labelsize'] = 18
     plt.rcParams['ytick.labelsize'] = 18
@@ -27,7 +27,7 @@ def plot(data, name='Actor', data_in_deg: bool = False, **kwargs):
     x_lst = data[:, 6:-1]
     rewards = data[:, -1]
     time = np.linspace(
-        0., data.shape[0] * mystyle.dt, data.shape[0] - skip_index - 1)
+        0., data.shape[0] * dt, data.shape[0] - skip_index - 1)
     x_lst = x_lst[0:-skip_index-1, :]
     u_lst = u_lst[0:-skip_index-1, :]
     ref_signals = ref_signals[0:-skip_index-1, :]
@@ -253,14 +253,14 @@ def plot_long(data, name='Actor', data_in_deg: bool = False, **kwargs):
     return fig, axs
 
 
-def plot_diff(data: np.ndarray, old_data: np.ndarray, name='Actor', data_in_deg: bool = False, **kwargs):
+def plot_diff(data: np.ndarray, old_data: np.ndarray, dt: float = 0.01, name='Actor', data_in_deg: bool = False, **kwargs):
     # demu data table
     ref_signals = data[:, :3]
     u_lst = data[:, 3:6]
     x_lst = data[:, 6:-1]
     u_lst_old = old_data[:, 3:6]
     x_lst_old = old_data[:, 6:-1]
-    time = np.linspace(0., data.shape[0] * mystyle.dt, data.shape[0])
+    time = np.linspace(0., data.shape[0] * dt, data.shape[0])
     u_lst[0, :] = 0.0
 
     # define figure
@@ -353,14 +353,14 @@ def plot_diff(data: np.ndarray, old_data: np.ndarray, name='Actor', data_in_deg:
 
 
 
-def plot_ref(data, **kwargs):
+def plot_ref(data, dt = 0.01, **kwargs):
     # hange these here
     plt.rcParams['xtick.labelsize'] = 18
     plt.rcParams['ytick.labelsize'] = 18
 
     # demu data table
     ref_signals = data[:, :3]
-    time = np.linspace(0., data.shape[0] * mystyle.dt, data.shape[0])
+    time = np.linspace(0., data.shape[0] * dt, data.shape[0])
 
 
     # define figure

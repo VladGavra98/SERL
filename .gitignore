@@ -224,3 +224,4 @@ base/core/__pycache__/utils.cpython-38.pyc
 base/__pycache__/parameters.cpython-38.pyc
 base/__pycache__/
 logs/tensorboard/
+tmp/

@@ -44,7 +44,7 @@ parser.add_argument('-disable_cuda', help='Disables CUDA',
 parser.add_argument('-name', '--agent_name', help='Path to the agent to be evaluated', type=str,
                     required=True)
 
-parser.add_argument('--control_period', help='Control update period [s]. The control signal is '
+parser.add_argument('-dt', '--control_period', help='Control update period [s]. The control signal is '
                     'refreshed at this rate while the simulation advances at dt=0.01 s (100 Hz). '
                     'Default 0.1 s -> 10 Hz control.', type=float, default=0.1)
 
@@ -139,6 +139,7 @@ def evaluate(actor, **kwargs: dict):
     nmae = calc_nMAE(errors)
     print('Finished?', done == True, f" - nMAE: {nmae:.1f}%")
 
+    print(data.shape)
     return data, nmae, smoothness
 
 
@@ -234,7 +235,7 @@ def main():
         data, stats = validate_agent(
             pop[idx], user_eval_refs, cla.num_trails, stdout=True, plot_spectra=cla.plot_spectra)
         plot(
-            data, name=f'nMAE: {stats.nmae:0.1f}%      Smoothness: {stats.sm:0.0f}', fault=fault_name,
+            data, dt = cla.control_period,  name=f'nMAE: {stats.nmae:0.1f}%      Smoothness: {stats.sm:0.0f}', fault=fault_name,
             savefigure=f'actor{idx}_{fault_name}.png' if cla.save_plots else None)
 
         # Save trajectories on base reference
@@ -267,7 +268,7 @@ def main():
         # Plot the champion actor
         print('Champion:', idx)
         plot(
-            champion_data, name=rf'nMAE: {champ_stats.nmae:0.1f}%      Smoothness: {champ_stats.sm:0.0f}', fault=fault_name,
+            champion_data,dt = cla.control_period, name=rf'nMAE: {champ_stats.nmae:0.1f}%      Smoothness: {champ_stats.sm:0.0f}', fault=fault_name,
             savefigure=f'champion_actor{idx}_{fault_name}.png' if cla.save_plots else None)
 
         print("Population stats:")
@@ -316,7 +317,7 @@ def main():
 
         # Plot the RL actor
         plot(
-            data_rl, name=f'nMAE: {rl_stats.nmae:0.1f}%      Smoothness: {rl_stats.sm:0.0f}', fault=fault_name,
+            data_rl, dt = cla.control_period, name=f'nMAE: {rl_stats.nmae:0.1f}%      Smoothness: {rl_stats.sm:0.0f}', fault=fault_name,
             savefigure=f'rl_{fault_name}.png' if cla.save_plots else None)
 
         '''   Save data to files '''
